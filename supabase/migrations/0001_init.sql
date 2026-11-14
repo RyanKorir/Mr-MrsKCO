@@ -17,7 +17,7 @@ create table divisions (
 create table contestants (
   id uuid primary key default gen_random_uuid(),
   division_id int not null references divisions(id),
-  user_id uuid not null references auth.users,               -- applicant (guardian for minors)
+  user_id uuid references auth.users,                        -- optional: contestants apply without an account
   full_name text not null, stage_name text, email text not null, whatsapp text not null,
   date_of_birth date not null, town text, bio text, talent text, photo_path text not null,
   is_minor boolean not null, guardian_name text, guardian_phone text,
@@ -58,7 +58,6 @@ create view public_contestants as
 select id, division_id, contestant_no, referral_code, photo_path, bio,
   case when is_minor then split_part(full_name,' ',1) else coalesce(stage_name, full_name) end as display_name
 from contestants where status = 'approved';
-grant select on public_contestants, divisions, age_groups to anon, authenticated;
 
 create function cast_vote(p_contestant uuid, p_ref text default null) returns void
 language plpgsql security definer set search_path=public as $$
@@ -74,7 +73,6 @@ begin
   insert into ballots (division_id, contestant_id, ref_code) values (v_div, p_contestant, p_ref);
 exception when unique_violation then raise exception 'already_voted';
 end $$;
-grant execute on function cast_vote to authenticated;
 
 -- Results: hidden until published, except to voting staff.
 create function division_results(p_division int) returns table (contestant_id uuid, votes bigint)
@@ -83,12 +81,14 @@ begin
   if not (is_staff('voting_manager') or exists (select 1 from divisions where id = p_division and results_published)) then raise exception 'results_hidden'; end if;
   return query select b.contestant_id, sum(b.weight)::bigint from ballots b where b.division_id = p_division group by 1 order by 2 desc;
 end $$;
-grant execute on function division_results to anon, authenticated;
 
 alter table profiles enable row level security; alter table contestants enable row level security;
 alter table fashion_week_applications enable row level security; alter table vote_receipts enable row level security;
 alter table ballots enable row level security; alter table judge_scores enable row level security;
 alter table event_settings enable row level security; alter table audit_logs enable row level security;
+alter table divisions enable row level security; alter table age_groups enable row level security;
+create policy read_divisions on divisions for select using (true);
+create policy read_age_groups on age_groups for select using (true);
 -- No policies on vote_receipts / ballots: browsers can never read or write them directly.
 create policy own_profile on profiles for select using (id = auth.uid() or is_staff('event_manager'));
 create policy own_apply on contestants for insert with check (user_id = auth.uid() and status = 'submitted');
@@ -98,8 +98,19 @@ create policy fw_insert on fashion_week_applications for insert with check (true
 create policy fw_read on fashion_week_applications for select using (user_id = auth.uid() or is_staff('event_manager'));
 create policy fw_edit on fashion_week_applications for update using (is_staff('event_manager'));
 create policy staff_scores on judge_scores for all using (is_staff('voting_manager'));
-create policy staff_settings on event_settings for all using (is_staff());
-create policy staff_audit on audit_logs for select using (is_staff());
+create policy staff_settings on event_settings for all using (is_staff('super_admin'));
+create policy staff_audit on audit_logs for select using (is_staff('super_admin'));
+
+-- Lock down grants: API roles get only what they need (Supabase grants broad defaults).
+revoke all on all tables in schema public from anon, authenticated;
+grant select on public_contestants, divisions, age_groups to anon, authenticated;
+grant select on profiles, contestants, fashion_week_applications to authenticated;
+grant insert, update on contestants, fashion_week_applications to authenticated;
+grant select, insert, update, delete on judge_scores, event_settings to authenticated;
+grant select on audit_logs to authenticated;
+revoke execute on all functions in schema public from public, anon;
+grant execute on function cast_vote(uuid, text) to authenticated;
+grant execute on function division_results(int) to anon, authenticated;
 
 -- Seed: DRAFT divisions (age groups from poster 3). Edit after review.
 insert into age_groups values ('kids','Kids',5,10),('teens','Teens',11,17),('seniors','Seniors',18,26);
