@@ -27,7 +27,8 @@ export default function Home() {
             </li>
           ))}
         </ul>
-        <p className="mt-10 text-sm text-ivory/70">Questions? Call {EVENT.phones.join(" or ")}.</p>
+        <p className="mt-10"><a href="/fashion-week" className="text-gold underline underline-offset-4">Kericho Fashion Week 2027: designers and fashionistas, apply here</a></p>
+        <p className="mt-6 text-sm text-ivory/70">Questions? Call {EVENT.phones.join(" or ")}.</p>
       </section>
     </main>
   );
