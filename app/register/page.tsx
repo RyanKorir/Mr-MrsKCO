@@ -1,5 +1,6 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Countdown from "@/components/Countdown";
 import { compressImage } from "@/lib/image";
 
 const DIVS = [
@@ -12,7 +13,9 @@ const DIVS = [
 const input = "w-full border border-gold/40 bg-black/40 px-3 py-2 text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold";
 
 export default function Register() {
-  const [dob, setDob] = useState(""), [busy, setBusy] = useState(false), [err, setErr] = useState(""), [ref, setRef] = useState("");
+  const [gender, setGender] = useState(""), [status, setStatus] = useState<{ open: boolean; opens?: string }>({ open: true }), [dob, setDob] = useState(""), [busy, setBusy] = useState(false), [err, setErr] = useState(""), [ref, setRef] = useState("");
+  useEffect(() => { fetch("/api/status").then((r) => r.json()).then(setStatus).catch(() => {}); }, []);
+  const shown = DIVS.filter(([v]) => !gender || (gender === "male" ? v.endsWith("-mr") : v.endsWith("-miss")));
   const minor = dob ? (Date.now() - new Date(dob).getTime()) / 31557600000 < 18 : false;
 
   async function submit(e: React.FormEvent<HTMLFormElement>) {
@@ -36,12 +39,19 @@ export default function Register() {
       <p className="mt-4">Your reference is <b className="text-gold">{ref}</b>. The organisers will review your application and contact you on WhatsApp.</p>
     </main>);
 
+  if (!status.open) return (
+    <main className="mx-auto flex max-w-xl flex-col items-center gap-6 px-6 py-24 text-center">
+      <h1 className="font-display text-3xl text-gold">Registration opens 1 December 2026</h1>
+      <Countdown to={status.opens!} />
+    </main>);
+
   return (
     <main className="mx-auto max-w-xl px-6 py-16">
       <h1 className="font-display text-3xl text-gold">Register as a contestant</h1>
-      <p className="mt-2 text-sm text-ivory/75">Registration opens 1 December 2026. Applications are reviewed before any profile is published.</p>
+      <p className="mt-2 text-sm text-ivory/75">Applications are reviewed before any profile is published.</p>
       <form onSubmit={submit} className="mt-8 grid gap-5">
-        <label>Category<select name="division" required className={input}><option value="">Choose a category…</option>{DIVS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select></label>
+        <label>I am<select name="gender" required value={gender} onChange={(e) => setGender(e.target.value)} className={input}><option value="">Choose…</option><option value="male">Male (Mr)</option><option value="female">Female (Miss)</option></select></label>
+        <label>Category<select name="division" required className={input}><option value="">Choose a category…</option>{shown.map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select></label>
         <label>Full name<input name="fullName" required className={input} /></label>
         <label>Stage name (optional, shown to voters)<input name="stageName" className={input} /></label>
         <label>Email<input name="email" type="email" required className={input} /></label>

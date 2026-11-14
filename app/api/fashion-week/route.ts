@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { adminClient } from "@/lib/supabase-server";
+import { notifyApplication } from "@/lib/email";
 const fail = (error: string, status = 400) => NextResponse.json({ error }, { status });
 
 export async function POST(req: Request) {
@@ -24,5 +25,6 @@ export async function POST(req: Request) {
   const { error } = await db.from("fashion_week_applications").insert({
     kind, full_name: fullName, email, phone, location: g("location") || null, bio: g("bio") || null, links, photo_path });
   if (error) return fail("Could not save your application. Please try again.", 500);
+  await notifyApplication({ kind: "Fashion Week " + kind, name: fullName, email, detail: kind });
   return NextResponse.json({ ok: true });
 }
