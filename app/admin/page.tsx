@@ -54,7 +54,7 @@ export default function Admin() {
       <meta name="robots" content="noindex" />
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="font-display text-2xl text-gold">Applications</h1>
-        <button className={btn} onClick={async () => { await sb.auth.signOut(); setToken(null); setData(null); }}>Sign out</button>
+        <div className="flex gap-2"><a href="/admin/results" className={btn}>Results</a><button className={btn} onClick={async () => { await sb.auth.signOut(); setToken(null); setData(null); }}>Sign out</button></div>
       </div>
       <div className="mt-4 flex flex-wrap gap-2">
         {(["contestants", "fashion"] as const).map((t) => <button key={t} onClick={() => setTab(t)} className={`${btn} ${tab === t ? "bg-gold !text-black" : ""}`}>{t === "contestants" ? "Contestants" : "Fashion Week"}</button>)}
