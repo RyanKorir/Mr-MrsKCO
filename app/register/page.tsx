@@ -37,7 +37,7 @@ export default function Register() {
   if (ref) return (
     <main className="mx-auto max-w-xl px-6 py-24 text-center">
       <h1 className="font-display text-3xl text-gold">Application received</h1>
-      <p className="mt-4">Your reference is <b className="text-gold">{ref}</b>. The organisers will review your application and contact you on WhatsApp.</p>
+      <p className="mt-4">Your registration number is <b className="text-gold">{ref}</b>. The organisers will review your application and contact you on WhatsApp.</p>
     </main>);
 
   if (!status.open) return (
