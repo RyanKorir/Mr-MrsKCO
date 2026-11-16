@@ -69,7 +69,7 @@ export default function Admin() {
             {tab === "contestants" && (c.photo ? <img src={c.photo} alt="" className="h-40 w-full object-cover sm:w-[120px]" /> : <div className="h-40 bg-black/40" />)}
             <div className={tab === "contestants" ? "" : "sm:col-span-2"}>
               <p className="font-display text-lg">{c.full_name}{c.stage_name ? ` (“${c.stage_name}”)` : ""} {c.contestant_no ? <span className="text-gold">#{c.contestant_no}</span> : null} {c.is_test && <span className="ml-2 border border-ivory/40 px-1 text-xs">TEST</span>}</p>
-              <p className="text-sm text-ivory/75">{tab === "contestants" ? `${c.divisions?.title} · born ${c.date_of_birth} · ${c.town ?? "no town"}${c.is_minor ? " · UNDER 18" : ""}` : `${c.kind} · ${c.location ?? "no town"}`}</p>
+              <p className="text-sm text-ivory/75">{tab === "contestants" ? `${c.divisions?.title} · born ${c.date_of_birth} · ${c.constituency ?? c.town ?? "no area"}${c.ward ? ", " + c.ward : ""}${c.is_minor ? " · UNDER 18" : ""}` : `${c.kind} · ${c.constituency ?? c.location ?? "no area"}${c.ward ? ", " + c.ward : ""}`}</p>
               <p className="mt-1 text-sm">{c.email} · {c.whatsapp ?? c.phone}</p>
               {c.is_minor && <p className="mt-1 text-sm text-gold">Guardian: {c.guardian_name}, {c.guardian_phone} · consent {c.guardian_consent ? "given" : "MISSING"}</p>}
               {(c.bio || c.talent) && <p className="mt-2 text-sm text-ivory/85">{c.bio} {c.talent}</p>}

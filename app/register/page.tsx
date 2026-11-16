@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import Countdown from "@/components/Countdown";
+import LocationFields from "@/components/LocationFields";
 import { compressImage } from "@/lib/image";
 
 const DIVS = [
@@ -57,7 +58,7 @@ export default function Register() {
         <label>Email<input name="email" type="email" required className={input} /></label>
         <label>WhatsApp number<input name="whatsapp" inputMode="tel" placeholder="0712 345 678" required className={input} /></label>
         <label>Date of birth (kept private)<input name="dob" type="date" required value={dob} onChange={(e) => setDob(e.target.value)} className={input} /></label>
-        <label>Town<input name="town" className={input} /></label>
+        <LocationFields />
         <label>Short bio<textarea name="bio" rows={3} className={input} /></label>
         <label>Talent or special skills<input name="talent" className={input} /></label>
         <label>Photo (required)<input name="photo" type="file" accept="image/*" required className={input} /></label>

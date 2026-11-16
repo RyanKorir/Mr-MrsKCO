@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { adminClient } from "@/lib/supabase-server";
 import { notifyApplication } from "@/lib/email";
+import { validateLocation } from "@/lib/kericho";
 const fail = (error: string, status = 400) => NextResponse.json({ error }, { status });
 
 export async function POST(req: Request) {
@@ -12,6 +13,8 @@ export async function POST(req: Request) {
   if (!/^(\+?254|0)\d{9}$/.test(phone.replace(/\s/g, ""))) return fail("Enter a valid Kenyan phone number.");
   if (g("rules") !== "yes") return fail("You must accept the event rules and privacy notice.");
 
+  const loc = validateLocation(g("constituency"), g("ward"));
+  if (!loc) return fail("Choose your constituency and ward.");
   const db = adminClient();
   let photo_path: string | null = null;
   const photo = f.get("photo");
@@ -23,7 +26,7 @@ export async function POST(req: Request) {
   }
   const links = g("links").split(/[\n,]+/).map((s) => s.trim()).filter(Boolean).slice(0, 5);
   const { error } = await db.from("fashion_week_applications").insert({
-    kind, full_name: fullName, email, phone, location: g("location") || null, bio: g("bio") || null, links, photo_path });
+    kind, full_name: fullName, email, phone, constituency: loc.constituency, ward: loc.ward, bio: g("bio") || null, links, photo_path });
   if (error) return fail("Could not save your application. Please try again.", 500);
   await notifyApplication({ kind: "Fashion Week " + kind, name: fullName, email, detail: kind });
   return NextResponse.json({ ok: true });

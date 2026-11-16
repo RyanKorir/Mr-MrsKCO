@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { compressImage } from "@/lib/image";
+import LocationFields from "@/components/LocationFields";
 const input = "w-full border border-gold/40 bg-black/40 px-3 py-2 text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold";
 
 export default function FashionWeek() {
@@ -31,7 +32,7 @@ export default function FashionWeek() {
         <label>Full name or brand name<input name="fullName" required className={input} /></label>
         <label>Email<input name="email" type="email" required className={input} /></label>
         <label>Phone / WhatsApp<input name="phone" inputMode="tel" placeholder="0712 345 678" required className={input} /></label>
-        <label>Town<input name="location" className={input} /></label>
+        <LocationFields />
         <label>About you or your collection<textarea name="bio" rows={4} className={input} /></label>
         <label>Instagram, TikTok or website links (one per line)<textarea name="links" rows={2} className={input} /></label>
         <label>Photo or look (optional)<input name="photo" type="file" accept="image/*" className={input} /></label>

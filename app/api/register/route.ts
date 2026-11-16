@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { adminClient } from "@/lib/supabase-server";
 import { getSettings } from "@/lib/settings";
 import { notifyApplication } from "@/lib/email";
+import { validateLocation } from "@/lib/kericho";
 
 const fail = (error: string, status = 400) => NextResponse.json({ error }, { status });
 const ageOn = (dob: Date, ref: Date) => { let a = ref.getFullYear() - dob.getFullYear(); const m = ref.getMonth() - dob.getMonth(); if (m < 0 || (m === 0 && ref.getDate() < dob.getDate())) a--; return a; };
@@ -21,6 +22,8 @@ export async function POST(req: Request) {
   if (!(photo instanceof Blob) || photo.size === 0 || photo.size > 5_000_000) return fail("Add a photo under 5 MB.");
   if (g("rules") !== "yes") return fail("You must accept the event rules and privacy notice.");
 
+  const loc = validateLocation(g("constituency"), g("ward"));
+  if (!loc) return fail("Choose your constituency and ward.");
   const dob = new Date(dobStr); if (isNaN(+dob)) return fail("Enter a valid date of birth.");
   const age = ageOn(dob, st.ageRef), minor = age < 18;
   if (minor && (!g("guardianName") || !g("guardianPhone") || g("guardianConsent") !== "yes"))
@@ -40,7 +43,7 @@ export async function POST(req: Request) {
   const now = new Date().toISOString();
   const { data, error } = await db.from("contestants").insert({
     division_id: div.id, applicant_gender: gender, full_name: fullName, stage_name: g("stageName") || null, email, whatsapp,
-    date_of_birth: dobStr, town: g("town") || null, bio: g("bio") || null, talent: g("talent") || null, photo_path: path,
+    date_of_birth: dobStr, constituency: loc.constituency, ward: loc.ward, bio: g("bio") || null, talent: g("talent") || null, photo_path: path,
     is_minor: minor, guardian_name: g("guardianName") || null, guardian_phone: g("guardianPhone") || null,
     guardian_consent: minor, consent_at: minor ? now : null, rules_accepted_at: now, status: "submitted",
   }).select("referral_code").single();
