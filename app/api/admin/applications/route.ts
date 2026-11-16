@@ -12,6 +12,6 @@ export async function GET(req: Request) {
   const paths = (data ?? []).map((c) => c.photo_path);
   const { data: signed } = await s.db.storage.from("contestant-photos").createSignedUrls(paths, 3600);
   const url = Object.fromEntries((signed ?? []).map((x) => [x.path, x.signedUrl]));
-  const { data: fw } = await s.db.from("fashion_week_applications").select("id, kind, full_name, email, phone, location, constituency, ward, bio, links, status, created_at").order("created_at", { ascending: false });
+  const { data: fw } = await s.db.from("fashion_week_applications").select("id, kind, full_name, email, phone, location, constituency, ward, bio, links, status, is_test, created_at").order("created_at", { ascending: false });
   return NextResponse.json({ contestants: (data ?? []).map((c) => ({ ...c, photo: url[c.photo_path] ?? null })), fashionWeek: fw ?? [] });
 }
