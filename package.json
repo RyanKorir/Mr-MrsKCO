@@ -13,7 +13,8 @@
     "react": "^19",
     "react-dom": "^19",
     "exceljs": "^4.4.0",
-    "jspdf": "^3.0.0"
+    "jspdf": "^3.0.0",
+    "nodemailer": "^7.0.0"
   },
   "devDependencies": {
     "@types/node": "^22",
