@@ -20,7 +20,7 @@ export default function Results() {
   useEffect(() => { if (token) load(); }, [token]);
   async function load() {
     const r = await fetch("/api/admin/results", { headers: { Authorization: `Bearer ${token}` } });
-    if (r.status === 401) return setErr("Your account is not allowed to view results (Super Admin or Voting Manager only).");
+    if (r.status === 401) return setErr("Your account is not allowed to view results (staff accounts only).");
     setData(await r.json());
   }
   async function publish(id: number, published: boolean) {

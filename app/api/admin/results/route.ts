@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { requireStaff } from "@/lib/admin-auth";
 import { buildResults } from "@/lib/results";
 export const dynamic = "force-dynamic";
-const ROLES = ["super_admin", "voting_manager"];
+const ROLES = ["super_admin", "voting_manager", "event_manager"];
 
 export async function GET(req: Request) {
   const s = await requireStaff(req, ROLES);
