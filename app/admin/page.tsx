@@ -10,7 +10,7 @@ type C = any;
 
 export default function Admin() {
   const [token, setToken] = useState<string | null>(null), [err, setErr] = useState(""), [data, setData] = useState<{ contestants: C[]; fashionWeek: C[] } | null>(null);
-  const [tab, setTab] = useState<"contestants" | "fashion">("contestants"), [filter, setFilter] = useState("submitted"), [busy, setBusy] = useState(""), [note, setNote] = useState("");
+  const [tab, setTab] = useState<"contestants" | "fashion">("contestants"), [filter, setFilter] = useState("submitted"), [busy, setBusy] = useState(""), [note, setNote] = useState(""), [sent, setSent] = useState<string[]>([]);
 
   useEffect(() => { sb.auth.getSession().then(({ data }) => setToken(data.session?.access_token ?? null)); }, []);
   useEffect(() => { if (token) load(); }, [token]);
@@ -33,6 +33,13 @@ export default function Admin() {
     const j = await r.json(); if (!r.ok) setErr(j.error); else { if (j.emailed) setNote("Approval email sent automatically."); await load(); }
     setBusy("");
   }
+  async function emailApproval(c: C) {
+    setBusy("m" + c.id); setErr(""); setNote("");
+    const r = await fetch("/api/admin/notify", { method: "POST", headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" }, body: JSON.stringify({ id: c.id }) });
+    const j = await r.json();
+    if (r.ok) { setSent((x) => [...x, c.id]); setNote(`Approval email sent to ${j.to}.`); } else setErr(j.error);
+    setBusy("");
+  }
   const list = useMemo(() => (tab === "contestants" ? data?.contestants : data?.fashionWeek)?.filter((x: C) => filter === "all" || x.status === filter) ?? [], [data, tab, filter]);
   const count = (s: string) => (tab === "contestants" ? data?.contestants : data?.fashionWeek)?.filter((x: C) => x.status === s).length ?? 0;
 
@@ -50,7 +57,6 @@ export default function Admin() {
 
   const text = (c: C) => approvalText({ name: c.stage_name || c.full_name.split(" ")[0], title: c.divisions?.title, no: c.contestant_no });
   const wa = (c: C) => `https://wa.me/${c.whatsapp}?text=${encodeURIComponent(text(c))}`;
-  const mail = (c: C) => `mailto:${c.email}?subject=${encodeURIComponent("You are approved – Mr & Miss Kericho 2027")}&body=${encodeURIComponent(text(c))}`;
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-8">
@@ -83,7 +89,7 @@ export default function Admin() {
                 <button disabled={busy === c.id} className={btn} onClick={() => review(c.id, "review", tab === "fashion" ? "fashion_week" : "contestants")}>Under review</button>
                 <button disabled={busy === c.id} className={btn} onClick={() => confirm("Reject this application?") && review(c.id, "reject", tab === "fashion" ? "fashion_week" : "contestants")}>Reject</button>
                 {tab === "contestants" && c.status === "approved" && <a className={btn} href={wa(c)} target="_blank" rel="noopener noreferrer">Send approval on WhatsApp</a>}
-                {tab === "contestants" && c.status === "approved" && <a className={btn} href={mail(c)}>Send approval by email</a>}
+                {tab === "contestants" && c.status === "approved" && <button disabled={busy === "m" + c.id} className={btn} onClick={() => emailApproval(c)}>{sent.includes(c.id) ? "Email sent ✓ (send again)" : busy === "m" + c.id ? "Sending…" : "Send approval by email"}</button>}
               </div>
             </div>
           </li>))}

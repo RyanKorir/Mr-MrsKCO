@@ -4,4 +4,4 @@ const headers = [
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
   { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
 ];
-export default { async headers() { return [{ source: "/:path*", headers }]; } };
+export default { serverExternalPackages: ["nodemailer"], async headers() { return [{ source: "/:path*", headers }]; } };

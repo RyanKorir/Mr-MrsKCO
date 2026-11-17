@@ -20,7 +20,7 @@ async function send(to: string, subject: string, html: string): Promise<boolean>
       headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
       body: JSON.stringify({ from: process.env.EMAIL_FROM || "Mr & Miss Kericho <onboarding@resend.dev>", reply_to: REPLY_TO, to: [to], subject, html }) });
     return res.ok;
-  } catch { return false; }
+  } catch (e: any) { console.error("email_failed", e?.code ?? "", e?.message ?? ""); return false; }
 }
 export async function notifyApplication(o: { kind: string; name: string; email: string; reference?: string; detail: string }) {
   const org = process.env.ORGANISER_EMAIL;
