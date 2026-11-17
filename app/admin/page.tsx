@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
 import { createClient } from "@supabase/supabase-js";
+import { approvalText } from "@/lib/messages";
 
 const sb = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
 const input = "w-full border border-gold/40 bg-black/40 px-3 py-2 text-ivory focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold";
@@ -9,7 +10,7 @@ type C = any;
 
 export default function Admin() {
   const [token, setToken] = useState<string | null>(null), [err, setErr] = useState(""), [data, setData] = useState<{ contestants: C[]; fashionWeek: C[] } | null>(null);
-  const [tab, setTab] = useState<"contestants" | "fashion">("contestants"), [filter, setFilter] = useState("submitted"), [busy, setBusy] = useState("");
+  const [tab, setTab] = useState<"contestants" | "fashion">("contestants"), [filter, setFilter] = useState("submitted"), [busy, setBusy] = useState(""), [note, setNote] = useState("");
 
   useEffect(() => { sb.auth.getSession().then(({ data }) => setToken(data.session?.access_token ?? null)); }, []);
   useEffect(() => { if (token) load(); }, [token]);
@@ -29,7 +30,7 @@ export default function Admin() {
   async function review(id: string, action: string, table = "contestants") {
     setBusy(id); setErr("");
     const r = await fetch("/api/admin/review", { method: "POST", headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" }, body: JSON.stringify({ id, action, table }) });
-    const j = await r.json(); if (!r.ok) setErr(j.error); else await load();
+    const j = await r.json(); if (!r.ok) setErr(j.error); else { if (j.emailed) setNote("Approval email sent automatically."); await load(); }
     setBusy("");
   }
   const list = useMemo(() => (tab === "contestants" ? data?.contestants : data?.fashionWeek)?.filter((x: C) => filter === "all" || x.status === filter) ?? [], [data, tab, filter]);
@@ -47,7 +48,9 @@ export default function Admin() {
       </form>
     </main>);
 
-  const wa = (c: C) => `https://wa.me/${c.whatsapp}?text=${encodeURIComponent(`Congratulations ${c.stage_name || c.full_name.split(" ")[0]}! Your application for ${c.divisions?.title} in Mr & Miss Kericho 2027 has been approved. Your contestant number is ${c.contestant_no}. The organisers will share the next steps soon.`)}`;
+  const text = (c: C) => approvalText({ name: c.stage_name || c.full_name.split(" ")[0], title: c.divisions?.title, no: c.contestant_no });
+  const wa = (c: C) => `https://wa.me/${c.whatsapp}?text=${encodeURIComponent(text(c))}`;
+  const mail = (c: C) => `mailto:${c.email}?subject=${encodeURIComponent("You are approved – Mr & Miss Kericho 2027")}&body=${encodeURIComponent(text(c))}`;
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-8">
@@ -62,6 +65,7 @@ export default function Admin() {
         {["submitted", "under_review", "approved", "rejected", "all"].map((s) => <button key={s} onClick={() => setFilter(s)} className={`${btn} ${filter === s ? "bg-gold !text-black" : ""}`}>{s.replace("_", " ")}{s !== "all" ? ` (${count(s)})` : ""}</button>)}
       </div>
       {err && <p role="alert" className="mt-4 text-red-300">{err}</p>}
+      {note && <p role="status" className="mt-4 text-gold">{note}</p>}
       {!data && <p className="mt-8 text-ivory/70">Loading…</p>}
       <ul className="mt-6 grid gap-4">
         {list.map((c: C) => (
@@ -79,6 +83,7 @@ export default function Admin() {
                 <button disabled={busy === c.id} className={btn} onClick={() => review(c.id, "review", tab === "fashion" ? "fashion_week" : "contestants")}>Under review</button>
                 <button disabled={busy === c.id} className={btn} onClick={() => confirm("Reject this application?") && review(c.id, "reject", tab === "fashion" ? "fashion_week" : "contestants")}>Reject</button>
                 {tab === "contestants" && c.status === "approved" && <a className={btn} href={wa(c)} target="_blank" rel="noopener noreferrer">Send approval on WhatsApp</a>}
+                {tab === "contestants" && c.status === "approved" && <a className={btn} href={mail(c)}>Send approval by email</a>}
               </div>
             </div>
           </li>))}
