@@ -24,5 +24,8 @@ Site: https://mr-miss-kericho.vercel.app · Voting is open for testing until 25 
 - [ ] WhatsApp and email approval buttons work; organiser alert email arrives
 - [ ] Results: counts, % and charts match the votes cast; Excel and PDF exports open correctly and say TEST
 - [ ] Publish results → /results shows them; unpublish hides them
+## Guide
+- [ ] /how-it-works is easy to understand for a first-time user (ask someone who has never seen the site)
+- [ ] The voting link on the registration confirmation screen copies and opens /vote
 ## What to report
 Screenshot, the time, device/browser, and what you expected vs what happened.

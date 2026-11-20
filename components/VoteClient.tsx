@@ -45,9 +45,13 @@ export default function VoteClient({ divisions, turnstileKey }: { divisions: D[]
   return (
     <main className="mx-auto max-w-5xl px-6 py-16">
       <h1 className="font-display text-4xl text-gold">Vote</h1>
-      <p className="mt-3 text-ivory/80">Voting is free. You get one vote in each category. Sign in with your email to vote.</p>
+      <p className="mt-3 text-ivory/80">Voting is free. You get one vote in each category.</p>
+      <ol className="mt-4 grid gap-3 sm:grid-cols-3 text-sm">
+        {["Sign in with your email below.", "Find your favourite and tap Vote.", "Confirm. Votes cannot be changed."].map((t, i) => <li key={t} className="flex gap-3 border border-gold/30 p-3"><span className="font-display text-gold">{i + 1}</span><span>{t}</span></li>)}
+      </ol>
+      <p className="mt-2 text-xs text-ivory/60">Need help? <a className="underline" href="/how-it-works#vote">Read the voting guide</a>.</p>
       <div className="mt-6 border border-gold/30 p-4">
-        {token ? <button className={btn} onClick={() => sb.auth.signOut()}>Sign out</button> : sent ? <p>Check your email for a sign-in link, then come back here.</p> : (
+        {token ? <button className={btn} onClick={() => sb.auth.signOut()}>Sign out</button> : sent ? <p>We sent a sign-in link to <b>{email}</b>. Open it on this phone. Not there? Check Spam or Promotions, then try again.</p> : (
           <form onSubmit={signIn} className="flex flex-wrap gap-3">
             <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" aria-label="Email" className="min-w-0 flex-1 border border-gold/40 bg-black/40 px-3 py-2 text-ivory" />
             <button className="bg-gold px-5 py-2 font-semibold text-black">Email me a sign-in link</button>

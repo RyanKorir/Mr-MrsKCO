@@ -38,6 +38,9 @@ export default function Register() {
     <main className="mx-auto max-w-xl px-6 py-24 text-center">
       <h1 className="font-display text-3xl text-gold">Application received</h1>
       <p className="mt-4">Your registration number is <b className="text-gold">{ref}</b>. The organisers will review your application and contact you on WhatsApp.</p>
+      <p className="mt-6 text-sm text-ivory/80">Your voting link to share once you are approved:</p>
+      <p className="mt-1 break-all text-gold">{`${typeof window !== "undefined" ? window.location.origin : ""}/vote?ref=${ref}`}</p>
+      <button type="button" className="mt-2 border border-gold/60 px-3 py-1.5 text-sm text-gold" onClick={() => navigator.clipboard?.writeText(`${window.location.origin}/vote?ref=${ref}`)}>Copy link</button>
     </main>);
 
   if (!status.open) return (
@@ -49,7 +52,7 @@ export default function Register() {
   return (
     <main className="mx-auto max-w-xl px-6 py-16">
       <h1 className="font-display text-3xl text-gold">Register as a contestant</h1>
-      <p className="mt-2 text-sm text-ivory/75">Applications are reviewed before any profile is published.</p>
+      <p className="mt-2 text-sm text-ivory/75">What happens next: you submit, the organisers review, and you are told by WhatsApp or email. <a className="underline" href="/how-it-works#enter">See the steps</a>. Applications are reviewed before any profile is published.</p>
       <form onSubmit={submit} className="mt-8 grid gap-5">
         <label>I am<select name="gender" required value={gender} onChange={(e) => setGender(e.target.value)} className={input}><option value="">Choose…</option><option value="male">Male (Mr)</option><option value="female">Female (Miss)</option></select></label>
         <label>Category<select name="division" required className={input}><option value="">Choose a category…</option>{shown.map(([v, l]) => <option key={v} value={v}>{l}</option>)}</select></label>

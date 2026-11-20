@@ -17,6 +17,14 @@ export default function Home() {
           <a href="/vote" className="border border-gold px-7 py-3 text-gold focus-visible:outline focus-visible:outline-2 focus-visible:outline-ivory">Voting opens soon</a>
         </div>
       </section>
+      <section className="mx-auto max-w-4xl px-6 pt-20">
+        <h2 className="font-display text-3xl text-gold">How it works</h2>
+        <ol className="mt-6 grid gap-4 sm:grid-cols-3">
+          {[["Register", "Choose your category and send your application."], ["Get approved", "The organisers review it and give you a contestant number."], ["Share and vote", "Invite people to vote for you. Voting is free."]].map(([t, d], i) => (
+            <li key={t} className="border border-gold/30 p-4"><span className="font-display text-2xl text-gold">{i + 1}</span><p className="mt-2 font-display text-lg">{t}</p><p className="mt-1 text-sm text-ivory/80">{d}</p></li>))}
+        </ol>
+        <p className="mt-4"><a href="/how-it-works" className="text-gold underline underline-offset-4">See the full guide and answers to common questions</a></p>
+      </section>
       <section className="mx-auto max-w-4xl px-6 py-20">
         <h2 className="font-display text-3xl text-gold">Competition categories</h2>
         <ul className="mt-8 divide-y divide-gold/25">
