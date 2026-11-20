@@ -1,0 +1,16 @@
+create index if not exists ballots_division_idx on ballots (division_id);
+create index if not exists vote_receipts_division_idx on vote_receipts (division_id);
+create index if not exists contestants_user_idx on contestants (user_id);
+create index if not exists contestants_division_status_idx on contestants (division_id, status);
+create index if not exists fashion_week_user_idx on fashion_week_applications (user_id);
+create index if not exists judge_scores_division_idx on judge_scores (division_id);
+create index if not exists judge_scores_judge_idx on judge_scores (judge_id);
+create index if not exists divisions_age_group_idx on divisions (age_group);
+drop policy own_profile on profiles;
+create policy own_profile on profiles for select using (id = (select auth.uid()) or is_staff('event_manager'));
+drop policy own_apply on contestants;
+create policy own_apply on contestants for insert with check (user_id = (select auth.uid()) and status = 'submitted');
+drop policy own_read on contestants;
+create policy own_read on contestants for select using (user_id = (select auth.uid()) or is_staff('event_manager'));
+drop policy fw_read on fashion_week_applications;
+create policy fw_read on fashion_week_applications for select using (user_id = (select auth.uid()) or is_staff('event_manager'));
