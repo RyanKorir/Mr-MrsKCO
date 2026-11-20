@@ -13,7 +13,7 @@ delete from audit_logs;
 -- 3) Switch to live so new rows are NOT labelled as test.
 update event_settings set value = '"live"' where key = 'environment';
 update event_settings set value = 'false' where key = 'registration_force_open';
--- 3b) Voting was opened for TESTING (20 Nov 2026 to 5 Dec 2026). Set the REAL dates (replace the values) and hide test results.
+-- 3b) Voting was opened for TESTING (20 Nov 2026 to 25 Nov 2026). Set the REAL dates (replace the values) and hide test results.
 -- update divisions set voting_opens = 'REAL OPEN TIME+03', voting_closes = 'REAL CLOSE TIME+03', results_published = false;
 -- delete from event_settings where key = 'voting_window_placeholder';
 -- 4) By hand: delete leftover photos in Storage > contestant-photos; delete test voter accounts in Authentication > Users (keep staff).

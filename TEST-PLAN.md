@@ -1,5 +1,5 @@
 # Test plan – Mr & Miss Kericho 2027 (TEST MODE: all data is deleted before launch)
-Site: https://mr-miss-kericho.vercel.app · Voting is open for testing until 5 Dec 2026, 23:59 (EAT).
+Site: https://mr-miss-kericho.vercel.app · Voting is open for testing until 25 Nov 2026, 23:59 (EAT).
 
 ## Contestant registration (/register)
 - [ ] Adult in the right category (Kericho 18–26) → success screen with registration number
@@ -18,6 +18,7 @@ Site: https://mr-miss-kericho.vercel.app · Voting is open for testing until 5 D
 - [ ] Contestants can vote, including for themselves, once per category
 - [ ] Share link /vote?ref=VOTE-XXXX highlights that contestant
 - [ ] Disposable emails (e.g. mailinator) are refused
+- [ ] Gmail tricks do not give extra votes: john.doe@gmail.com, johndoe@gmail.com and johndoe+2@gmail.com count as ONE voter
 ## Staff (/admin, /admin/results)
 - [ ] Approve → contestant number assigned; reject; under review; minors need guardian consent
 - [ ] WhatsApp and email approval buttons work; organiser alert email arrives
