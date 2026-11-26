@@ -11,7 +11,7 @@ export async function buildResults(db: SupabaseClient, publishedOnly: boolean): 
     db.from("event_settings").select("value").eq("key", "environment").maybeSingle(),
   ]);
   const votes = new Map((sum ?? []).map((r: any) => [r.contestant_id, r]));
-  const divisions: Div[] = (divs ?? []).filter((d: any) => !publishedOnly || d.results_published).map((d: any) => {
+  const divisions: Div[] = (divs ?? []).filter((d: any) => !publishedOnly || (d.results_published && d.voting_closes && +new Date(d.voting_closes) <= Date.now())).map((d: any) => {
     const list = (cs ?? []).filter((c: any) => c.division_id === d.id).map((c: any) => {
       const v: any = votes.get(c.id);
       return { id: c.id, no: c.contestant_no, name: c.is_minor ? c.full_name.split(" ")[0] : c.stage_name || c.full_name, votes: Number(v?.votes ?? 0), viaLink: Number(v?.via_link ?? 0) };

@@ -4,7 +4,7 @@ import { adminClient } from "@/lib/supabase-server";
 export const dynamic = "force-dynamic";
 export default async function Home() {
   let resultsOut = false;
-  try { const { count } = await adminClient().from("divisions").select("id", { count: "exact", head: true }).eq("results_published", true); resultsOut = (count ?? 0) > 0; } catch {}
+  try { const { count } = await adminClient().from("divisions").select("id", { count: "exact", head: true }).eq("results_published", true).lt("voting_closes", new Date().toISOString()); resultsOut = (count ?? 0) > 0; } catch {}
   return (
     <main>
       {resultsOut && <a href="/results" className="block bg-gold px-4 py-2 text-center text-sm font-semibold text-black">Results are in. See the winners</a>}

@@ -9,7 +9,7 @@ export default function Footer() {
       <div className="mx-auto flex max-w-5xl flex-wrap justify-between gap-6">
         <div className="flex items-center gap-3"><img src="/dwell-logo.jpg" alt="" className="h-12 w-12 rounded-full bg-white object-cover" /><p>Presented by Dwell Events Limited</p></div>
         <div><p className="text-gold">Contact</p><p>mrandmisskericho@gmail.com</p><p>{EVENT.phones.join(" / ")}</p><p>@mrandmisskericho</p></div>
-        <div><p className="text-gold">Explore</p><p><a href="/about">About</a> · <a href="/how-it-works">How it works</a> · <a href="/contestants">Contestants</a> · <a href="/results">Results</a> · <a href="/register">Register</a></p></div>
+        <div><p className="text-gold">Explore</p><p><a href="/about">About</a> · <a href="/how-it-works">How it works</a> · <a href="/contestants">Contestants</a> · <a href="/register">Register</a></p></div>
       </div>
       {SPONSORS.length > 0 && (
         <div className="mx-auto mt-8 flex max-w-5xl flex-wrap items-center gap-x-6 gap-y-3 border-t border-gold/15 pt-6">

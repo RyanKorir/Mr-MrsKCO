@@ -9,7 +9,7 @@ export default async function PublicResults() {
     <main className="mx-auto max-w-4xl px-6 py-16">
       <h1 className="font-display text-4xl text-gold">Results</h1>
       {data.environment !== "live" && <p className="mt-4 border border-red-400/60 p-3 text-red-300">TEST DATA: this site is in testing mode.</p>}
-      {data.divisions.length === 0 && <p className="mt-6 text-ivory/80">Results will be published here once voting closes.</p>}
+      {data.divisions.length === 0 && <p className="mt-6 text-ivory/80">Results are announced by the organisers after voting closes.</p>}
       {data.divisions.map((d) => (
         <section key={d.id} className="mt-12">
           <h2 className="font-display text-2xl">{d.title} <span className="text-sm text-ivory/60">· {d.category}</span></h2>

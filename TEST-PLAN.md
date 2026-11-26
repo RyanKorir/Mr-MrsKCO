@@ -1,5 +1,5 @@
 # Test plan – Mr & Miss Kericho 2027 (TEST MODE: all data is deleted before launch)
-Site: https://mr-miss-kericho.vercel.app · Voting is open for testing until 25 Nov 2026, 23:59 (EAT).
+Site: https://mr-miss-kericho.vercel.app · Voting is open for testing until 28 Nov 2026, 23:59 (EAT).
 
 ## Contestant registration (/register)
 - [ ] Adult in the right category (Kericho 18–26) → success screen with registration number
