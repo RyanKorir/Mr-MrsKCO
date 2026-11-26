@@ -49,6 +49,7 @@ export default function Results() {
         <section key={d.id} className="mt-8 border border-gold/30 p-4">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <h2 className="font-display text-xl">{d.title} <span className="text-sm text-ivory/60">· {d.category} · {d.total} votes</span></h2>
+            {d.published && <a href="/results" target="_blank" className={btn}>View public page</a>}
             <button disabled={busy === "p" + d.id} className={btn} onClick={() => publish(d.id, !d.published)}>{d.published ? "Unpublish results" : "Publish results"}</button>
           </div>
           <div className="mt-3 overflow-x-auto"><table className="w-full text-left text-sm"><thead className="text-gold"><tr><th className="p-1">Rank</th><th>No.</th><th>Contestant</th><th>Votes</th><th>Share</th><th>Via own link</th></tr></thead>

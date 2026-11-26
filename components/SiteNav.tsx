@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
-const links = [["/", "Home"], ["/about", "About"], ["/how-it-works", "How it works"], ["/contestants", "Contestants"], ["/vote", "Vote"], ["/fashion-week", "Fashion Week"], ["/contact", "Contact"]];
+const links = [["/", "Home"], ["/about", "About"], ["/how-it-works", "How it works"], ["/contestants", "Contestants"], ["/vote", "Vote"], ["/results", "Results"], ["/fashion-week", "Fashion Week"], ["/contact", "Contact"]];
 export default function SiteNav() {
   const path = usePathname(), [open, setOpen] = useState(false);
   if (path.startsWith("/admin")) return null;

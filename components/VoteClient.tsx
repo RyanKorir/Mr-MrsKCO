@@ -4,7 +4,7 @@ import { createClient } from "@supabase/supabase-js";
 
 const sb = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
 const btn = "border border-gold/60 px-3 py-1.5 text-sm text-gold hover:bg-gold hover:text-black disabled:opacity-40";
-type D = { id: number; category: string; title: string; opens: string | null; closes: string | null; state: string; contestants: { id: string; no: number | null; name: string; photo: string | null; code: string }[] };
+type D = { id: number; published: boolean; category: string; title: string; opens: string | null; closes: string | null; state: string; contestants: { id: string; no: number | null; name: string; photo: string | null; code: string }[] };
 const when = (s: string | null) => (s ? new Date(s).toLocaleString("en-KE", { dateStyle: "medium", timeStyle: "short" }) : "to be announced");
 
 export default function VoteClient({ divisions, turnstileKey }: { divisions: D[]; turnstileKey: string }) {
@@ -65,7 +65,7 @@ export default function VoteClient({ divisions, turnstileKey }: { divisions: D[]
           {divisions.filter((d) => d.category === cat).map((d) => (
             <div key={d.id} className="mt-6">
               <h3 className="text-gold">{d.title} <span className="text-sm text-ivory/60">
-                {d.state === "open" ? `· voting closes ${when(d.closes)}` : d.state === "soon" ? `· voting opens ${when(d.opens)}` : "· voting closed"}{voted.includes(d.id) ? " · you voted ✓" : ""}</span></h3>
+                {d.state === "open" ? `· voting closes ${when(d.closes)}` : d.state === "soon" ? `· voting opens ${when(d.opens)}` : "· voting closed"}{voted.includes(d.id) ? " · you voted ✓" : ""}{d.published ? <> · <a className="text-gold underline" href="/results">results are in</a></> : ""}</span></h3>
               {d.contestants.length === 0 ? <p className="mt-2 text-sm text-ivory/60">No contestants announced yet.</p> : (
                 <ul className="mt-3 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
                   {d.contestants.map((c) => (

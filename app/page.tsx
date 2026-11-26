@@ -1,8 +1,13 @@
 import Countdown from "@/components/Countdown";
 import { EVENT, DIVISIONS } from "@/lib/event";
-export default function Home() {
+import { adminClient } from "@/lib/supabase-server";
+export const dynamic = "force-dynamic";
+export default async function Home() {
+  let resultsOut = false;
+  try { const { count } = await adminClient().from("divisions").select("id", { count: "exact", head: true }).eq("results_published", true); resultsOut = (count ?? 0) > 0; } catch {}
   return (
     <main>
+      {resultsOut && <a href="/results" className="block bg-gold px-4 py-2 text-center text-sm font-semibold text-black">Results are in. See the winners</a>}
       <section className="relative flex min-h-[92vh] flex-col items-center justify-center gap-8 px-6 py-20 text-center"
         style={{ background: "radial-gradient(ellipse at 50% 0%, #0f6b49 0%, #0a3d2b 38%, #050b08 78%)" }}>
         <div className="flex items-center gap-3"><img src="/dwell-logo.jpg" alt="Dwell Events Limited" className="h-14 w-14 rounded-full bg-white object-cover" /><p className="text-sm text-ivory/80">Dwell Events presents</p></div>
